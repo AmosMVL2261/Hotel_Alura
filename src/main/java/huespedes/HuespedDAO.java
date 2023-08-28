@@ -1,5 +1,7 @@
 package huespedes;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 
 public class HuespedDAO {
@@ -12,5 +14,11 @@ public class HuespedDAO {
 	
 	public void guardarHuesped(Huesped huesped) {
 		this.em.persist(huesped);
+	}
+
+	public List<HuespedConReserva> getHuespedes() {
+		String jpql = "SELECT new huespedes.HuespedConReserva(h.id , h.nombre , h.apellido , h.fechaDeNacimiento , h.nacionalidad , h.telefono , r.id) "
+				+ "From Reserva r JOIN r.huesped h";
+		return em.createQuery(jpql, HuespedConReserva.class).getResultList();
 	}
 }

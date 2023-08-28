@@ -312,10 +312,8 @@ public class RegistroHuesped extends JFrame {
 				try {
 					RealizarReserva realizarReserva = new RealizarReserva();
 					realizarReserva.reserva(huesped, reserva);
-					
-					JOptionPane.showMessageDialog(null, "Registro exitoso");
-			        MenuUsuario menu = new MenuUsuario();
-			        menu.setVisible(true);
+			        Exito exito = new Exito();
+			        exito.setVisible(true);
 			        dispose();
 				} catch (Exception e2) {
 					JOptionPane.showMessageDialog(null, "A ocurrido un error al momento de generar su reserva");

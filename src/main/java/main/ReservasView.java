@@ -376,6 +376,7 @@ public class ReservasView extends JFrame {
 					//Siguiente ventana
 					RegistroHuesped registro = new RegistroHuesped(reserva);
 					registro.setVisible(true);
+					dispose();
 				} else {
 					JOptionPane.showMessageDialog(null, "Debes llenar todos los campos.");
 				}

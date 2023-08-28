@@ -6,6 +6,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
+import services.MostrarReservas;
+
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ImageIcon;
@@ -24,6 +27,8 @@ import java.awt.event.MouseMotionAdapter;
 @SuppressWarnings("serial")
 public class Busqueda extends JFrame {
 
+	private MostrarReservas mostrarReservas;
+	
 	private JPanel contentPane;
 	private JTextField txtBuscar;
 	private JTable tbHuespedes;
@@ -93,15 +98,18 @@ public class Busqueda extends JFrame {
 		tbReservas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tbReservas.setFont(new Font("Roboto", Font.PLAIN, 16));
 		modelo = (DefaultTableModel) tbReservas.getModel();
-		modelo.addColumn("Numero de Reserva");
+		modelo.addColumn("Número de Reserva");
 		modelo.addColumn("Fecha Check In");
 		modelo.addColumn("Fecha Check Out");
 		modelo.addColumn("Valor");
 		modelo.addColumn("Forma de Pago");
+		modelo.addColumn("Número de Huesped");	
 		JScrollPane scroll_table = new JScrollPane(tbReservas);
 		panel.addTab("Reservas", new ImageIcon(Busqueda.class.getResource("/imagenes/reservado.png")), scroll_table, null);
 		scroll_table.setVisible(true);
 		
+		mostrarReservas = new MostrarReservas();
+		mostrarReservas.agregarReservas(modelo);
 		
 		tbHuespedes = new JTable();
 		tbHuespedes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -117,6 +125,9 @@ public class Busqueda extends JFrame {
 		JScrollPane scroll_tableHuespedes = new JScrollPane(tbHuespedes);
 		panel.addTab("Huéspedes", new ImageIcon(Busqueda.class.getResource("/imagenes/pessoas.png")), scroll_tableHuespedes, null);
 		scroll_tableHuespedes.setVisible(true);
+		
+		mostrarReservas = new MostrarReservas();
+		mostrarReservas.agregarHuespedes(modeloHuesped);
 		
 		JLabel lblNewLabel_2 = new JLabel("");
 		lblNewLabel_2.setIcon(new ImageIcon(Busqueda.class.getResource("/imagenes/Ha-100px.png")));
