@@ -18,7 +18,13 @@ public class HuespedDAO {
 
 	public List<HuespedConReserva> getHuespedes() {
 		String jpql = "SELECT new huespedes.HuespedConReserva(h.id , h.nombre , h.apellido , h.fechaDeNacimiento , h.nacionalidad , h.telefono , r.id) "
-				+ "From Reserva r JOIN r.huesped h";
+				+ "FROM Reserva r JOIN r.huesped h";
 		return em.createQuery(jpql, HuespedConReserva.class).getResultList();
+	}
+	
+	public List<HuespedConReserva> getHuespedesFiltradosPorApellido(String apellido) {
+		String jpql = "SELECT new huespedes.HuespedConReserva(h.id , h.nombre , h.apellido , h.fechaDeNacimiento , h.nacionalidad , h.telefono , r.id)"
+				+ " FROM Reserva AS r JOIN r.huesped h WHERE h.apellido = :apellido";
+		return em.createQuery(jpql, HuespedConReserva.class).setParameter("apellido", apellido).getResultList();
 	}
 }

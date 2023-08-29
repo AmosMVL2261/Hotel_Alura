@@ -4,6 +4,10 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
+import huespedes.HuespedConReserva;
+import huespedes.HuespedDAO;
+import utils.JPAUtils;
+
 public class ReservaController {
 	
 	public static void main(String[] args) {
@@ -13,6 +17,19 @@ public class ReservaController {
 		List<Reserva> r = reservaDAO.getReservas();
 		r.forEach(row -> System.out.println(row));
 		*/
+		/*
+		String idBuscado = "1";
+		EntityManager em = JPAUtils.getEntityManager();
+		ReservaDAO reservaDAO = new ReservaDAO(em);
+		List<Reserva> r = reservaDAO.getReservasFiltradasPorId(idBuscado);
+		r.forEach(row -> System.out.println(row));
+		*/
+		
+		
+	}
+	
+	public ReservaController() {
+		
 	}
 	
 	public void registrarReserva(Reserva reserva, EntityManager em) {
@@ -28,6 +45,11 @@ public class ReservaController {
 	public List<Reserva> todasLasReservas(EntityManager em){
 		ReservaDAO reservaDAO = new ReservaDAO(em);
 		return reservaDAO.getReservas();
+	}
+	
+	public List<Reserva> filtrarReservasPorID(EntityManager em, String idBuscado){
+		ReservaDAO reservaDAO = new ReservaDAO(em);
+		return reservaDAO.getReservasFiltradasPorId(idBuscado);
 	}
 	
 }

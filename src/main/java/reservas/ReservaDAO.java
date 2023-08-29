@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
+import huespedes.HuespedConReserva;
+
 public class ReservaDAO {
 	
 	private EntityManager em;
@@ -26,6 +28,12 @@ public class ReservaDAO {
 	public List<Reserva> getReservas() {
 		String jpql = "SELECT r FROM Reserva AS r";
 		return em.createQuery(jpql, Reserva.class).getResultList();
+	}
+
+	public List<Reserva> getReservasFiltradasPorId(String idBuscado) {
+		Integer idBuscadoNumerico = Integer.valueOf(idBuscado);
+		String jpql = "SELECT r FROM Reserva AS r WHERE r.id = :idBuscado";
+		return em.createQuery(jpql, Reserva.class).setParameter("idBuscado", idBuscadoNumerico).getResultList();
 	}
 	
 }
