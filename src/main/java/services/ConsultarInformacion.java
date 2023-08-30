@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
+import huespedes.Huesped;
 import huespedes.HuespedConReserva;
 import huespedes.HuespedController;
 import reservas.Reserva;
@@ -12,10 +13,10 @@ import utils.JPAUtils;
 
 public class ConsultarInformacion {
 	
-	public List<HuespedConReserva> todosLosHuespedes(){
+	public List<Huesped> todosLosHuespedes(){
 		HuespedController hc = new HuespedController();
 		EntityManager em = JPAUtils.getEntityManager();
-		List<HuespedConReserva> result = hc.todasLasReservas(em);
+		List<Huesped> result = hc.todasLasReservas(em);
 		em.close();
 		return result;
 	}
@@ -35,11 +36,27 @@ public class ConsultarInformacion {
 		em.close();
 		return result;
 	}
-
-	public List<HuespedConReserva> buscarHuesped(String searchingTerm) {
+	
+	public List<Huesped> buscarHuesped(String searchingTerm) {
 		EntityManager em = JPAUtils.getEntityManager();
 		HuespedController hc = new HuespedController();
-		List<HuespedConReserva> result = hc.filtrarHuespedesPorApellido(em, searchingTerm);
+		List<Huesped> result = hc.filtrarHuespedesPorApellido(em, searchingTerm);
+		em.close();
+		return result;
+	}
+	
+	public List<HuespedConReserva> buscarHuespedConReserva(String searchingTerm) {
+		EntityManager em = JPAUtils.getEntityManager();
+		HuespedController hc = new HuespedController();
+		List<HuespedConReserva> result = hc.filtrarHuespedesConReservaPorApellido(em, searchingTerm);
+		em.close();
+		return result;
+	}
+	
+	public List<HuespedConReserva> todosLosHuespedesConReserva(){
+		HuespedController hc = new HuespedController();
+		EntityManager em = JPAUtils.getEntityManager();
+		List<HuespedConReserva> result = hc.todasLasReservasConHuesped(em);
 		em.close();
 		return result;
 	}

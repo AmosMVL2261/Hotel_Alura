@@ -7,13 +7,21 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import huespedes.Huesped;
 import huespedes.HuespedConReserva;
+import huespedes.HuespedDTO;
 import reservas.Reserva;
+import reservas.ReservaController;
+import reservas.ReservaDTO;
 import services.ConsultarInformacion;
+import services.ModificarInformacion;
 import services.MostrarInformacion;
 
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -33,13 +41,18 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @SuppressWarnings("serial")
 public class Busqueda extends JFrame {
 
 	private ConsultarInformacion consultarInformacion;
 	private MostrarInformacion mostrarInformacion;
+	private ModificarInformacion modificarInformacion;
 	
 	private JPanel contentPane;
 	private JTextField txtBuscar;
@@ -80,6 +93,7 @@ public class Busqueda extends JFrame {
 		
 		mostrarInformacion = new MostrarInformacion();
 		consultarInformacion = new ConsultarInformacion();
+		modificarInformacion = new ModificarInformacion();
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Busqueda.class.getResource("/imagenes/lupa2.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -154,7 +168,7 @@ public class Busqueda extends JFrame {
 		modeloHuesped.addColumn("Fecha de Nacimiento");
 		modeloHuesped.addColumn("Nacionalidad");
 		modeloHuesped.addColumn("Telefono");
-		modeloHuesped.addColumn("Número de Reserva");
+		//modeloHuesped.addColumn("Número de Reserva");
 		
 		tbHuespedes = new JTable(modeloHuesped);
 		tbHuespedes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -344,7 +358,11 @@ public class Busqueda extends JFrame {
 	}
 	
 	private void cargarTablaHuespedesIniciales() {
+		/*
 		List<HuespedConReserva> lista =  consultarInformacion.todosLosHuespedes();
+		mostrarInformacion.agregarHuespedes(modeloHuesped, lista);
+		*/
+		List<Huesped> lista =  consultarInformacion.todosLosHuespedes();
 		mostrarInformacion.agregarHuespedes(modeloHuesped, lista);
 	}
 	
@@ -386,7 +404,8 @@ public class Busqueda extends JFrame {
 			            return;
 			        }
 			        // El termino a buscar en el caso de reservas es el numero de reserva
-			        List<HuespedConReserva> list = consultarInformacion.buscarHuesped(searchingTerm);
+			        //List<HuespedConReserva> list = consultarInformacion.buscarHuesped(searchingTerm);
+			        List<Huesped> list = consultarInformacion.buscarHuesped(searchingTerm);
 			        if(list.size()==0) {
 			        	JOptionPane.showMessageDialog(null, "La busqueda no arrojo ningun resultado, ingrese un apellido valido");
 			            return;
@@ -424,10 +443,125 @@ public class Busqueda extends JFrame {
 				// If panel.getSelectedIndex() = 0 reservas is selected
 				if(panel.getSelectedIndex()==0) {
 					
+					// Si no hay fila seleccionada sal de la funcion
+	        		if(tbReservas.getSelectedRow() ==-1) {
+	        			JOptionPane.showMessageDialog(null, "Por favor, elije un item");
+	        			return;
+	        		}
+			        Optional.ofNullable(modeloReservas.getValueAt(tbReservas.getSelectedRow(), tbReservas.getSelectedColumn()))
+		        	.ifPresentOrElse(fila -> {
+		        		// int columnaSeleccionada = tbReservas.getSelectedColumn();
+		        		int filaSeleccionada = tbReservas.getSelectedRow();
+
+		        		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		        		
+		        		Integer id  = (Integer) modeloReservas.getValueAt(filaSeleccionada, 0);;
+		        		LocalDate fechaDeEntrada;
+		        		LocalDate fechaDeSalida;
+		        		BigDecimal valor;
+		        		String formaDePago = (String) modeloReservas.getValueAt(filaSeleccionada, 4);
+		        		Integer huesped;	
+		        		
+		        		// If a value is change by the user, the type of that column will be change to String automatically
+		        		// That's why I use a double cast, the firstis there is nothing to change, and the second if the user 
+		        		// change something to string
+		        		try {
+		        			fechaDeEntrada = (LocalDate) modeloReservas.getValueAt(filaSeleccionada, 1);
+		        			System.out.println("1 fechaDeEntrada " +fechaDeEntrada);
+						} catch (Exception e) {
+							fechaDeEntrada = LocalDate.parse((String) modeloReservas.getValueAt(filaSeleccionada, 1), formatter);
+							System.out.println("2 fechaDeEntrada " +fechaDeEntrada);
+						}
+		        		try {
+		        			fechaDeSalida = (LocalDate) modeloReservas.getValueAt(filaSeleccionada, 2);
+		        			System.out.println("1 fechaDeSalida " +fechaDeSalida);
+						} catch (Exception e) {
+							fechaDeSalida = LocalDate.parse((String) modeloReservas.getValueAt(filaSeleccionada, 2), formatter);
+							System.out.println("2 fechaDeSalida " +fechaDeSalida);
+						}
+		        		try {
+		        			valor = (BigDecimal) modeloReservas.getValueAt(filaSeleccionada, 3);
+		        			System.out.println("1 valor " +valor);
+						} catch (Exception e) {
+							valor = new BigDecimal((String) modeloReservas.getValueAt(filaSeleccionada, 3));
+							System.out.println("2 valor " +valor);
+						}
+		        		try {
+							huesped = (Integer) modeloReservas.getValueAt(filaSeleccionada, 5);
+							System.out.println("1 huesped " +huesped);
+						} catch (Exception e) {
+							huesped = Integer.parseInt((String) modeloReservas.getValueAt(filaSeleccionada, 5));
+							System.out.println("2 huesped " +huesped);
+						}
+		        		
+		        		ReservaDTO reservaModificada = new ReservaDTO(
+		        			id,
+		        			fechaDeEntrada,
+		        			fechaDeSalida,
+		        			valor,
+		        			formaDePago,
+		        			huesped
+		        		);
+		        		
+		                // Conseguir el objeto reseva con el id y modificarlo a partir del dto
+		         		modificarInformacion.modificarReserva(reservaModificada);
+		                JOptionPane.showMessageDialog(null, String.format("Item modificado con éxito!"));
+		                limpiarTabla(modeloReservas);
+		                cargarTablaReservasIniciales();
+		                
+		            }, () -> JOptionPane.showMessageDialog(null, "Por favor, elije un item"));  
 				}
+				
+				
 				// If panel.getSelectedIndex() = 1 huespedes is selected				
 				if(panel.getSelectedIndex()==1) {
-					
+					// Si no hay fila seleccionada sal de la funcion
+	        		if(tbHuespedes.getSelectedRow() ==-1) {
+	        			JOptionPane.showMessageDialog(null, "Por favor, elije un item");
+	        			return;
+	        		}
+			        Optional.ofNullable(modeloHuesped.getValueAt(tbHuespedes.getSelectedRow(), tbHuespedes.getSelectedColumn()))
+		        	.ifPresentOrElse(fila -> {
+		        		// int columnaSeleccionada = tbHuespedes.getSelectedColumn();
+		        		int filaSeleccionada = tbHuespedes.getSelectedRow();
+
+		        		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		        		
+		        		Integer id = (Integer) modeloHuesped.getValueAt(filaSeleccionada, 0);
+	        			String nombre = (String) modeloHuesped.getValueAt(filaSeleccionada, 1);
+	        			String apellido = (String) modeloHuesped.getValueAt(filaSeleccionada, 2);
+	        			LocalDate fechaDeNacimiento;
+	        			String nacionalidad = (String) modeloHuesped.getValueAt(filaSeleccionada, 4);
+	        			String telefono = (String) modeloHuesped.getValueAt(filaSeleccionada, 5);
+	
+		        		
+		        		// If a value is change by the user, the type of that column will be change to String automatically
+		        		// That's why I use a double cast, the firstis there is nothing to change, and the second if the user 
+		        		// change something to string
+	        			try {
+	        				fechaDeNacimiento = (LocalDate) modeloHuesped.getValueAt(filaSeleccionada, 3);
+	        				System.out.println("1 fechaDeNacimiento " + fechaDeNacimiento);
+						} catch (Exception e) {
+							fechaDeNacimiento = LocalDate.parse((String) modeloHuesped.getValueAt(filaSeleccionada, 3), formatter);
+							System.out.println("2 fechaDeNacimiento " + fechaDeNacimiento);
+						}
+		        		
+		        		HuespedDTO huespedModificado = new HuespedDTO(
+		        			id,
+		        			nombre,
+		        			apellido,
+		        			fechaDeNacimiento,
+		        			nacionalidad,
+		        			telefono
+		        		);
+		        		
+		                // Conseguir el objeto huesped con el id y modificarlo a partir del dto
+		         		modificarInformacion.modificarHuesped(huespedModificado);
+		                JOptionPane.showMessageDialog(null, String.format("Item modificado con éxito!"));
+		                limpiarTabla(modeloHuesped);
+		                cargarTablaHuespedesIniciales();
+		                
+		            }, () -> JOptionPane.showMessageDialog(null, "Por favor, elije un item"));
 				}
 			}
 		});

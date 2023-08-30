@@ -21,14 +21,34 @@ public class HuespedController {
 		huespedDAO.guardarHuesped(huesped);
 	}
 	
-	public List<HuespedConReserva> todasLasReservas(EntityManager em){
+	public List<Huesped> todasLasReservas(EntityManager em){
 		HuespedDAO huespedDAO = new HuespedDAO(em);
 		return huespedDAO.getHuespedes();
 	}
 	
-	public List<HuespedConReserva> filtrarHuespedesPorApellido(EntityManager em, String searchingTerm) {
+	public List<Huesped> filtrarHuespedesPorApellido(EntityManager em, String searchingTerm) {
 		HuespedDAO huespedDAO = new HuespedDAO(em);
 		return huespedDAO.getHuespedesFiltradosPorApellido(searchingTerm);
+	}
+
+	public Huesped encontrarHuesped(EntityManager em, int huespedId) {
+		HuespedDAO huespedDAO = new HuespedDAO(em);
+		return huespedDAO.findHuesped(huespedId);
+	}
+
+	public void modificarHuesped(EntityManager em, HuespedDTO huespedModificado) {
+		HuespedDAO huespedDAO = new HuespedDAO(em);
+		huespedDAO.modificarHuespedPorId(huespedModificado);
+	}
+	
+	public List<HuespedConReserva> todasLasReservasConHuesped(EntityManager em){
+		HuespedDAO huespedDAO = new HuespedDAO(em);
+		return huespedDAO.getHuespedesConReserva();
+	}
+	
+	public List<HuespedConReserva> filtrarHuespedesConReservaPorApellido(EntityManager em, String searchingTerm) {
+		HuespedDAO huespedDAO = new HuespedDAO(em);
+		return huespedDAO.getHuespedesConReservaFiltradosPorApellido(searchingTerm);
 	}
 	
 }
