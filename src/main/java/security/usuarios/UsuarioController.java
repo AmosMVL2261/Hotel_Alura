@@ -6,7 +6,6 @@ import utils.JPAUtils;
 
 public class UsuarioController {
 	
-	
 	public Boolean checkLogin(String user, String password) {
 		if(user.trim().length() == 0 || user == null || password.trim().length() == 0 || password == null) {
 			return false;

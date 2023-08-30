@@ -53,4 +53,11 @@ public class HuespedDAO {
 				+ " FROM Reserva AS r JOIN r.huesped h WHERE h.apellido = :apellido";
 		return em.createQuery(jpql, HuespedConReserva.class).setParameter("apellido", apellido).getResultList();
 	}
+
+	public void deleteHuespedById(int id) {
+		em.getTransaction().begin();
+		Huesped h = findHuesped(id);
+		em.remove(h);
+		em.getTransaction().commit();
+	}
 }

@@ -1,20 +1,11 @@
 package reservas;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
-import org.hibernate.Query;
 
 import huespedes.Huesped;
-import huespedes.HuespedConReserva;
 import huespedes.HuespedController;
-import utils.JPAUtils;
 
 public class ReservaDAO {
 	
@@ -61,6 +52,13 @@ public class ReservaDAO {
 		reservaPorModificar.setValor(reservaModificada.getValor());
 		reservaPorModificar.setFormaDePago(reservaModificada.getFormaDePago());
 		reservaPorModificar.setHuesped(posibleNuevoHuesped);
+		em.getTransaction().commit();
+	}
+
+	public void deleteReservaById(int id) {
+		em.getTransaction().begin();
+		Reserva r = getReserva(id);
+		em.remove(r);
 		em.getTransaction().commit();
 	}
 	

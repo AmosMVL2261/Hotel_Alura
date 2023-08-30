@@ -8,20 +8,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import huespedes.Huesped;
-import huespedes.HuespedConReserva;
 import huespedes.HuespedDTO;
 import reservas.Reserva;
-import reservas.ReservaController;
 import reservas.ReservaDTO;
 import services.ConsultarInformacion;
+import services.EliminarInformacion;
 import services.ModificarInformacion;
 import services.MostrarInformacion;
 
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -53,6 +49,7 @@ public class Busqueda extends JFrame {
 	private ConsultarInformacion consultarInformacion;
 	private MostrarInformacion mostrarInformacion;
 	private ModificarInformacion modificarInformacion;
+	private EliminarInformacion eliminarInformacion;
 	
 	private JPanel contentPane;
 	private JTextField txtBuscar;
@@ -94,6 +91,7 @@ public class Busqueda extends JFrame {
 		mostrarInformacion = new MostrarInformacion();
 		consultarInformacion = new ConsultarInformacion();
 		modificarInformacion = new ModificarInformacion();
+		eliminarInformacion = new EliminarInformacion();
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Busqueda.class.getResource("/imagenes/lupa2.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -426,6 +424,22 @@ public class Busqueda extends JFrame {
 			            JOptionPane.showMessageDialog(null, "Por favor, elija una reserva");
 			            return;
 			        }
+			        
+			        Optional.ofNullable(modeloReservas.getValueAt(tbReservas.getSelectedRow(), tbReservas.getSelectedColumn()))
+		        	.ifPresentOrElse(fila -> {
+		        		// int columnaSeleccionada = tbReservas.getSelectedColumn();
+		        		int filaSeleccionada = tbReservas.getSelectedRow();
+
+		        		Integer id  = (Integer) modeloReservas.getValueAt(filaSeleccionada, 0);
+
+		                // Conseguir el objeto reseva con el id y eliminarlo a partir del dto
+		         		eliminarInformacion.eliminarReserva(id);
+		                JOptionPane.showMessageDialog(null, String.format("Item eliminado con éxito!"));
+		                limpiarTabla(modeloReservas);
+		                cargarTablaReservasIniciales();
+		                
+		            }, () -> JOptionPane.showMessageDialog(null, "Por favor, elije un item"));  
+			        
 				}
 				// If panel.getSelectedIndex() = 1 huespedes is selected				
 				if(panel.getSelectedIndex()==1) {
@@ -433,6 +447,22 @@ public class Busqueda extends JFrame {
 			            JOptionPane.showMessageDialog(null, "Por favor, elija un huesped");
 			            return;
 			        }
+			        
+			        Optional.ofNullable(modeloHuesped.getValueAt(tbHuespedes.getSelectedRow(), tbHuespedes.getSelectedColumn()))
+		        	.ifPresentOrElse(fila -> {
+		        		// int columnaSeleccionada = tbReservas.getSelectedColumn();
+		        		int filaSeleccionada = tbHuespedes.getSelectedRow();
+
+		        		Integer id  = (Integer) modeloHuesped.getValueAt(filaSeleccionada, 0);
+
+		                // Conseguir el objeto reseva con el id y eliminarlo a partir del dto
+		         		eliminarInformacion.eliminarHuesped(id);
+		                JOptionPane.showMessageDialog(null, String.format("Item eliminado con éxito!"));
+		                limpiarTabla(modeloHuesped);
+		                cargarTablaHuespedesIniciales();
+		                limpiarTabla(modeloReservas);
+		                cargarTablaReservasIniciales();
+		            }, () -> JOptionPane.showMessageDialog(null, "Por favor, elije un item"));  
 				}
 			}
 		});

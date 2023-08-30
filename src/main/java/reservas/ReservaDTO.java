@@ -3,8 +3,6 @@ package reservas;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import huespedes.Huesped;
-
 public class ReservaDTO {
 	private int id;
 	private LocalDate fechaDeEntrada;
