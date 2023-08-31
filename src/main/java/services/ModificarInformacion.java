@@ -13,15 +13,27 @@ public class ModificarInformacion {
 	public void modificarReserva(ReservaDTO reservaModificada) {
 		EntityManager em = JPAUtils.getEntityManager();
 		ReservaController rc = new ReservaController();
-		rc.modificarReserva(em, reservaModificada);
-		em.close();
+		try {
+			rc.modificarReserva(em, reservaModificada);
+		} catch (Exception e) {
+			em.getTransaction().rollback();
+		} finally {
+			em.close();
+		}
+		
 	}
 	
 	public void modificarHuesped(HuespedDTO huespedModificado) {
 		EntityManager em = JPAUtils.getEntityManager();
 		HuespedController hc = new HuespedController();
-		hc.modificarHuesped(em, huespedModificado);
-		em.close();
+		try {
+			hc.modificarHuesped(em, huespedModificado);
+		} catch (Exception e) {
+			em.getTransaction().rollback();
+		} finally {
+			em.close();
+		}
+		
 	}
 
 }

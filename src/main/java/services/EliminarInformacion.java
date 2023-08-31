@@ -10,14 +10,26 @@ public class EliminarInformacion {
 	public void eliminarReserva(int id) {
 		EntityManager em = JPAUtils.getEntityManager();
 		ReservaController rc = new ReservaController();
-		rc.eliminarReservaPorID(em, id);
-		em.close();
+		try {
+			rc.eliminarReservaPorID(em, id);
+		} catch (Exception e) {
+			em.getTransaction().rollback();
+		} finally {
+			em.close();
+		}
+		
 	}
 	
 	public void eliminarHuesped(int id) {
 		EntityManager em = JPAUtils.getEntityManager();
 		HuespedController hc = new HuespedController();
-		hc.eliminarHuespedPorId(em, id);
-		em.close();
+		try {
+			hc.eliminarHuespedPorId(em, id);
+		} catch (Exception e) {
+			em.getTransaction().rollback();
+		} finally {
+			em.close();
+		}
+		
 	}
 }

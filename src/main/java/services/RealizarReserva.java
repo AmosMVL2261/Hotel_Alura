@@ -14,25 +14,35 @@ public class RealizarReserva {
 
 		ReservaController reservaController = new ReservaController();
 		HuespedController huespedController = new HuespedController();
-		
 		EntityManager em = JPAUtils.getEntityManager();
+		try {
+			em.getTransaction().begin();
+			
+			huespedController.registrarHuesped(huesped, em);
+			reserva.setHuesped(huesped);
+			reservaController.registrarReserva(reserva, em);
+			
+			em.getTransaction().commit();
 		
-		em.getTransaction().begin();
+		} catch (Exception e) {
+			em.getTransaction().rollback();
+		} finally {
+			em.close();
+		}
 		
-		huespedController.registrarHuesped(huesped, em);
-		reserva.setHuesped(huesped);
-		reservaController.registrarReserva(reserva, em);
-		
-		em.getTransaction().commit();
-		
-		em.close();
 	}
 
 	public int ultimoIndex() {
-		EntityManager em = JPAUtils.getEntityManager();
 		ReservaController rc = new ReservaController();
-		int index = rc.ultimoIndex(em);
-		em.close();
+		EntityManager em = JPAUtils.getEntityManager();
+		int index;
+		try {
+			index = rc.ultimoIndex(em);
+		} catch (Exception e) {
+			index = -1;
+		} finally {
+			em.close();
+		}
 		return index;
 	}
 }
